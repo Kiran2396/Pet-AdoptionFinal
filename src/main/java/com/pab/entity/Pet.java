@@ -1,5 +1,7 @@
 package com.pab.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +22,7 @@ public class Pet {
 
     @ManyToOne
     @JoinColumn(name = "shelter_id")
+    @JsonIgnore
     private User shelter;
 
 	public Long getId() {
