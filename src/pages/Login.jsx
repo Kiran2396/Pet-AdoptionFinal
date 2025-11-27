@@ -151,12 +151,7 @@ function Login({ onLogin }) {
           </p>
         </div>
 
-        <div className={styles.demoCredentials}>
-          <h4>Demo Credentials:</h4>
-          <p><strong>Adopter:</strong> adopter@demo.com / password</p>
-          <p><strong>Shelter:</strong> shelter@demo.com / password</p>
-          <p><strong>Admin:</strong> admin@demo.com / password</p>
-        </div>
+        
       </div>
     </div>
   );
