@@ -1,59 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './Dashboard.module.css';
 
 function AdopterDashboard({ user }) {
   const [activeTab, setActiveTab] = useState('browse');
+
   const [filters, setFilters] = useState({
-    species: '',
-    breed: '',
-    age: '',
-    location: '',
-    health: ''
+    search: ""
   });
 
-  // Mock data for demonstration
-  const [pets] = useState([
-    {
-      id: 1,
-      name: 'Buddy',
-      species: 'dog',
-      breed: 'Golden Retriever',
-      age: '2 years',
-      location: 'New York',
-      health: 'excellent',
-      status: 'available',
-      image: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=400',
-      description: 'Friendly and energetic dog looking for an active family.',
-      shelter: 'Happy Paws Shelter'
-    },
-    {
-      id: 2,
-      name: 'Whiskers',
-      species: 'cat',
-      breed: 'Persian',
-      age: '1 year',
-      location: 'California',
-      health: 'good',
-      status: 'available',
-      image: 'https://images.pexels.com/photos/416160/pexels-photo-416160.jpeg?auto=compress&cs=tinysrgb&w=400',
-      description: 'Calm and loving cat perfect for apartment living.',
-      shelter: 'Feline Friends Rescue'
-    },
-    {
-      id: 3,
-      name: 'Max',
-      species: 'dog',
-      breed: 'Beagle',
-      age: '3 years',
-      location: 'Texas',
-      health: 'excellent',
-      status: 'available',
-      image: 'https://images.pexels.com/photos/1390361/pexels-photo-1390361.jpeg?auto=compress&cs=tinysrgb&w=400',
-      description: 'Playful beagle who loves children and outdoor activities.',
-      shelter: 'Austin Animal Center'
-    }
-  ]);
+  // -------------------------------
+  // 🔥 Load pets from backend
+  // -------------------------------
+  const [pets, setPets] = useState([]);
 
+  useEffect(() => {
+    fetch("http://localhost:8082/api/pets")
+      .then(res => res.json())
+      .then(data => {
+        console.log("Fetched pets:", data);
+
+        const formatted = data.map(p => ({
+          id: p.id,
+          name: p.name,
+          species: "pet",
+          breed: p.breed,
+          age: p.age + " years",
+          location: "Unknown",
+          health: p.healthInfo,
+          status: "available",
+          image: p.imageUrl,
+          description: "Lovely pet available for adoption.",
+          shelter: p.shelter?.name || "Unknown Shelter"
+        }));
+
+        setPets(formatted);
+      })
+      .catch(err => console.error("Error fetching pets:", err));
+  }, []);
+
+  // keep existing mock applications
   const [applications] = useState([
     {
       id: 1,
@@ -75,20 +60,20 @@ function AdopterDashboard({ user }) {
     }
   ]);
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
+  // ------------------------------------
+  // 🔥 New search-based filter
+  // ------------------------------------
   const filteredPets = pets.filter(pet => {
-    return (!filters.species || pet.species === filters.species) &&
-           (!filters.breed || pet.breed.toLowerCase().includes(filters.breed.toLowerCase())) &&
-           (!filters.age || pet.age.includes(filters.age)) &&
-           (!filters.location || pet.location.toLowerCase().includes(filters.location.toLowerCase())) &&
-           (!filters.health || pet.health === filters.health);
+    if (!filters.search.trim()) return true;
+
+    const text = filters.search.toLowerCase();
+    return (
+      pet.name.toLowerCase().includes(text) ||
+      pet.breed.toLowerCase().includes(text) ||
+      pet.species.toLowerCase().includes(text) ||
+      pet.health.toLowerCase().includes(text) ||
+      pet.shelter.toLowerCase().includes(text)
+    );
   });
 
   const handleAdopt = (petId) => {
@@ -112,6 +97,7 @@ function AdopterDashboard({ user }) {
           <p>Find your perfect companion and track your adoption journey</p>
         </div>
 
+        {/* Tabs */}
         <div className={styles.dashboardNav}>
           <button
             className={`${styles.tabButton} ${activeTab === 'browse' ? styles.active : ''}`}
@@ -133,84 +119,24 @@ function AdopterDashboard({ user }) {
           </button>
         </div>
 
+        {/* -------------------- */}
+        {/* 🔥 Updated Browse Tab */}
+        {/* -------------------- */}
         {activeTab === 'browse' && (
           <div className={styles.browseSection}>
-            <div className={styles.filtersCard}>
-              <h3>Filter Pets</h3>
-              <div className={styles.filtersGrid}>
-                <div className="form-group">
-                  <label className="form-label">Species</label>
-                  <select
-                    name="species"
-                    value={filters.species}
-                    onChange={handleFilterChange}
-                    className="form-select"
-                  >
-                    <option value="">All Species</option>
-                    <option value="dog">Dog</option>
-                    <option value="cat">Cat</option>
-                    <option value="rabbit">Rabbit</option>
-                    <option value="bird">Bird</option>
-                  </select>
-                </div>
-                
-                <div className="form-group">
-                  <label className="form-label">Breed</label>
-                  <input
-                    type="text"
-                    name="breed"
-                    value={filters.breed}
-                    onChange={handleFilterChange}
-                    placeholder="Enter breed"
-                    className="form-input"
-                  />
-                </div>
-                
-                <div className="form-group">
-                  <label className="form-label">Age</label>
-                  <select
-                    name="age"
-                    value={filters.age}
-                    onChange={handleFilterChange}
-                    className="form-select"
-                  >
-                    <option value="">Any Age</option>
-                    <option value="1">1 year</option>
-                    <option value="2">2 years</option>
-                    <option value="3">3 years</option>
-                    <option value="4+">4+ years</option>
-                  </select>
-                </div>
-                
-                <div className="form-group">
-                  <label className="form-label">Location</label>
-                  <input
-                    type="text"
-                    name="location"
-                    value={filters.location}
-                    onChange={handleFilterChange}
-                    placeholder="City or State"
-                    className="form-input"
-                  />
-                </div>
-                
-                <div className="form-group">
-                  <label className="form-label">Health</label>
-                  <select
-                    name="health"
-                    value={filters.health}
-                    onChange={handleFilterChange}
-                    className="form-select"
-                  >
-                    <option value="">Any Health Status</option>
-                    <option value="excellent">Excellent</option>
-                    <option value="good">Good</option>
-                    <option value="fair">Fair</option>
-                  </select>
-                </div>
-              </div>
+
+            {/* 🌟 NEW Modern Search Bar */}
+            <div className={styles.searchBarWrapper}>
+              <input
+                type="text"
+                className={styles.searchBar}
+                placeholder="Search pets by name, breed, species, health, or shelter..."
+                value={filters.search}
+                onChange={e => setFilters({ search: e.target.value })}
+              />
             </div>
 
+            {/* Pets Grid */}
             <div className={styles.petsGrid}>
               {filteredPets.map(pet => (
                 <div key={pet.id} className={styles.petCard}>
@@ -231,6 +157,7 @@ function AdopterDashboard({ user }) {
                       <small>Listed by: {pet.shelter}</small>
                     </div>
                   </div>
+
                   <div className={styles.petActions}>
                     <button
                       onClick={() => handleAdopt(pet.id)}
@@ -248,9 +175,11 @@ function AdopterDashboard({ user }) {
           </div>
         )}
 
+        {/* Applications Tab */}
         {activeTab === 'applications' && (
           <div className={styles.applicationsSection}>
             <h2>My Adoption Applications</h2>
+
             {applications.length === 0 ? (
               <div className={styles.emptyState}>
                 <p>You haven't submitted any adoption applications yet.</p>
@@ -274,11 +203,13 @@ function AdopterDashboard({ user }) {
                         {application.status.toUpperCase()}
                       </span>
                     </div>
+
                     <div className={styles.applicationDetails}>
                       <p><strong>Shelter:</strong> {application.shelter}</p>
                       <p><strong>Submitted:</strong> {application.submittedDate}</p>
                       <p><strong>Message:</strong> {application.message}</p>
                     </div>
+
                     <div className={styles.applicationActions}>
                       {application.status === 'approved' && (
                         <button className="btn btn-success">
@@ -296,6 +227,7 @@ function AdopterDashboard({ user }) {
           </div>
         )}
 
+        {/* Favorites */}
         {activeTab === 'favorites' && (
           <div className={styles.favoritesSection}>
             <h2>My Favorite Pets</h2>

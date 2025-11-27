@@ -7,9 +7,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-  "build:docker": "cross-env VITE_BASE_URL=/ vite build",
-  "build:gh": "cross-env VITE_BASE_URL=/Pet-Final/ vite build",
-  "build:tomcat": "cross-env VITE_BASE_URL=/frontend/ vite build",
+    "build:docker": "cross-env VITE_BASE_URL=/ vite build",
+    "build:gh": "cross-env VITE_BASE_URL=/Pet-Final/ vite build",
+    "build:tomcat": "cross-env VITE_BASE_URL=/frontend/ vite build",
     "preview": "vite preview",
     "lint": "eslint .",
     "predeploy": "npm run build:gh",

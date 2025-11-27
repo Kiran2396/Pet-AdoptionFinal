@@ -125,6 +125,27 @@ p {
   background-color: var(--primary-color);
   color: var(--white);
 }
+/* SEARCH BAR FIX */
+.pet-search-bar {
+    width: 100%;
+    max-width: 420px;
+    padding: 12px 16px;
+    font-size: 16px;
+    border-radius: 30px;
+    border: 2px solid #ccc;
+    background-color: #fff;
+    color: #333;            /* TEXT WILL NOW BE VISIBLE */
+    transition: 0.25s ease;
+    outline: none;
+}
+
+/* When user clicks the input */
+.pet-search-bar:focus {
+    border-color: #4A90E2;  /* blue border */
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.6);
+    background-color: #fff;
+    color: #111;            /* DARK TEXT */
+}
 
 .btn-accent {
   background-color: var(--accent-color);
