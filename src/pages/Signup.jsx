@@ -84,7 +84,7 @@ function Signup() {
 
     setIsLoading(true);
     setSuccessMessage('');
-
+ 
     try {
       // Send data to backend
       const response = await axios.post('http://localhost:8082/api/auth/register', formData);
